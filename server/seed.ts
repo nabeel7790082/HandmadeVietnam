@@ -14,7 +14,8 @@ async function seed(): Promise<boolean> {
   console.log("🌱 Seeding database...");
 
   try {
-    // Kiểm tra xem đã có dữ liệu trong bảng categories chưa
+    // Disable check for existing data to allow reseeding
+    /*
     const existingCategories = await db
       .select({ count: count() })
       .from(categories);
@@ -22,6 +23,7 @@ async function seed(): Promise<boolean> {
       console.log("⏭️ Database already has data, skipping seed");
       return true;
     }
+    */
 
     // Seed categories
     const categoryIds = await seedCategories();
@@ -83,7 +85,7 @@ async function seedCategories(): Promise<number[]> {
     .insert(categories)
     .values(categoriesData)
     .returning({ id: categories.id });
-  return insertedCategories.map((cat) => cat.id);
+  return insertedCategories.map((cat: { id: number }) => cat.id);
 }
 
 async function seedArtisans(): Promise<number[]> {
@@ -117,7 +119,7 @@ async function seedArtisans(): Promise<number[]> {
     .insert(artisans)
     .values(artisansData)
     .returning({ id: artisans.id });
-  return insertedArtisans.map((artisan) => artisan.id);
+  return insertedArtisans.map((artisan: { id: number }) => artisan.id);
 }
 
 async function seedProducts(categoryIds: number[], artisanIds: number[]) {
