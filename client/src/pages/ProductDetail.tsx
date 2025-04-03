@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatImageUrl } from '@/lib/utils';
 import ProductCard from '@/components/products/ProductCard';
 
 const ProductDetail = () => {
@@ -154,7 +154,7 @@ const ProductDetail = () => {
           <div className="w-full lg:w-1/2">
             <div className="relative bg-white rounded-lg overflow-hidden shadow-sm mb-4">
               <img 
-                src={selectedImage} 
+                src={formatImageUrl(selectedImage)} 
                 alt={product.name}
                 className="w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] object-contain mx-auto"
               />
@@ -180,7 +180,7 @@ const ProductDetail = () => {
                     className={`border rounded-md overflow-hidden hover:border-primary ${index === activeImageIndex ? 'border-primary' : 'border-gray-200'}`}
                   >
                     <img 
-                      src={image} 
+                      src={formatImageUrl(image)} 
                       alt={`${product.name} - ${index + 1}`}
                       className="w-full h-16 sm:h-20 object-cover"
                     />
@@ -384,7 +384,7 @@ const ProductDetail = () => {
                 <div className="border-b pb-6">
                   <div className="flex items-start gap-3 sm:gap-4">
                     <div className="w-10 h-10 shrink-0 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d" alt="User" className="w-full h-full object-cover" />
+                      <img src={formatImageUrl("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d")} alt="User" className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
@@ -410,7 +410,7 @@ const ProductDetail = () => {
                 <div className="border-b pb-6">
                   <div className="flex items-start gap-3 sm:gap-4">
                     <div className="w-10 h-10 shrink-0 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                      <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2" alt="User" className="w-full h-full object-cover" />
+                      <img src={formatImageUrl("https://images.unsplash.com/photo-1544005313-94ddf0286df2")} alt="User" className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">

@@ -4,7 +4,7 @@ import { Product } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatImageUrl } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
 type ProductCardProps = {
@@ -63,7 +63,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <Link href={`/products/${product.slug}`}>
           <div className="relative">
             <img 
-              src={product.image} 
+              src={formatImageUrl(product.image)} 
               alt={product.name} 
               className="w-full h-48 sm:h-52 md:h-56 lg:h-60 object-cover"
             />

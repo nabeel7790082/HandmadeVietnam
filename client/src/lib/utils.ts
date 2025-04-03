@@ -38,3 +38,12 @@ export function generateSlug(text: string): string {
 export function generateUniqueId(): string {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
+
+// Thêm tham số truy vấn vào URL hình ảnh để buộc trình duyệt tải lại
+export function formatImageUrl(url: string): string {
+  if (!url) return '';
+  // Thêm tham số cache-bust để tránh cache
+  const cacheBuster = 'v=' + new Date().getTime();
+  // Kiểm tra nếu URL đã có tham số truy vấn
+  return url.includes('?') ? `${url}&${cacheBuster}` : `${url}?${cacheBuster}`;
+}
