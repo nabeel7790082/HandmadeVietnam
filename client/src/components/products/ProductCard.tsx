@@ -28,7 +28,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
     });
   };
   
-  const renderStars = (rating: number) => {
+  const renderStars = (rating: number | null) => {
+    if (rating === null) rating = 0;
+    
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
@@ -51,28 +53,28 @@ const ProductCard = ({ product }: ProductCardProps) => {
   
   return (
     <div 
-      className="group"
+      className="group h-full"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition h-full flex flex-col">
         <Link href={`/products/${product.slug}`}>
           <div className="relative">
             <img 
               src={product.image} 
               alt={product.name} 
-              className="w-full h-60 object-cover"
+              className="w-full h-48 sm:h-52 md:h-56 lg:h-60 object-cover"
             />
-            {product.isNew && (
-              <div className="absolute top-0 left-0 m-2">
-                <Badge variant="new">Mới</Badge>
-              </div>
-            )}
-            {product.isBestseller && (
-              <div className="absolute top-0 left-0 m-2">
-                <Badge variant="success">Bán chạy</Badge>
-              </div>
-            )}
+            <div className="absolute top-0 left-0 m-2 flex flex-col gap-1">
+              {product.isNew && <Badge variant="new">Mới</Badge>}
+              {product.isBestseller && <Badge variant="success">Bán chạy</Badge>}
+              {product.salePrice && (
+                <Badge variant="accent">
+                  -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
+                </Badge>
+              )}
+            </div>
+            
             <div className={`absolute top-0 right-0 m-2 transition-opacity ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
               <button 
                 className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition mb-2 shadow-sm"
@@ -80,38 +82,43 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   e.preventDefault();
                   e.stopPropagation();
                 }}
+                aria-label="Thêm vào yêu thích"
               >
-                <i className="fas fa-heart"></i>
+                <i className="fas fa-heart text-sm"></i>
               </button>
-              <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm">
-                <i className="fas fa-eye"></i>
+              <button 
+                className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm"
+                aria-label="Xem nhanh"
+              >
+                <i className="fas fa-eye text-sm"></i>
               </button>
             </div>
           </div>
         </Link>
-        <div className="p-4">
-          <div className="text-xs text-gray-500 mb-1">{product.village}</div>
+        <div className="p-3 sm:p-4 flex-1 flex flex-col">
+          <div className="text-xs text-gray-500 mb-1 line-clamp-1">{product.village}</div>
           <Link href={`/products/${product.slug}`}>
-            <h3 className="font-medium mb-1 group-hover:text-primary transition">{product.name}</h3>
+            <h3 className="font-medium text-sm sm:text-base mb-1 line-clamp-2 group-hover:text-primary transition h-[2.5rem] sm:h-[3rem]">{product.name}</h3>
           </Link>
-          <div className="flex items-center mb-2">
+          <div className="flex items-center mb-2 mt-auto">
             <div className="flex text-accent">
               {renderStars(product.rating)}
             </div>
             <span className="text-xs text-gray-500 ml-1">({product.reviewCount})</span>
           </div>
           <div className="flex items-center justify-between">
-            <div>
-              <span className="font-bold text-primary">{formatCurrency(product.salePrice || product.price)}</span>
+            <div className="flex flex-col xs:flex-row xs:items-center gap-0.5 xs:gap-1">
+              <span className="font-bold text-primary text-sm sm:text-base">{formatCurrency(product.salePrice || product.price)}</span>
               {product.salePrice && (
-                <span className="text-sm text-gray-400 line-through ml-1">{formatCurrency(product.price)}</span>
+                <span className="text-xs sm:text-sm text-gray-400 line-through">{formatCurrency(product.price)}</span>
               )}
             </div>
             <button 
               className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition"
               onClick={handleAddToCart}
+              aria-label="Thêm vào giỏ hàng"
             >
-              <i className="fas fa-plus text-sm"></i>
+              <i className="fas fa-plus text-xs sm:text-sm"></i>
             </button>
           </div>
         </div>
