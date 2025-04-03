@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
 import { formatCurrency } from '@/lib/utils';
 import ProductCard from '@/components/products/ProductCard';
 
@@ -15,6 +16,7 @@ const ProductDetail = () => {
   const [match, params] = useRoute('/products/:slug');
   const { toast } = useToast();
   const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   
@@ -262,10 +264,27 @@ const ProductDetail = () => {
                   Thêm vào giỏ hàng
                 </button>
                 <button 
-                  className="w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:text-primary hover:border-primary transition"
-                  aria-label="Thêm vào danh sách yêu thích"
+                  className={`w-12 h-12 border rounded-md flex items-center justify-center transition ${isInWishlist(product.id) ? 'bg-primary text-white border-primary' : 'border-gray-300 hover:text-primary hover:border-primary'}`}
+                  aria-label={isInWishlist(product.id) ? "Xóa khỏi yêu thích" : "Thêm vào danh sách yêu thích"}
+                  onClick={() => {
+                    if (isInWishlist(product.id)) {
+                      removeFromWishlist(product.id);
+                      toast({
+                        title: "Đã xóa khỏi danh sách yêu thích",
+                        description: `${product.name} đã được xóa khỏi danh sách yêu thích.`,
+                        variant: "default",
+                      });
+                    } else {
+                      addToWishlist(product);
+                      toast({
+                        title: "Đã thêm vào danh sách yêu thích",
+                        description: `${product.name} đã được thêm vào danh sách yêu thích.`,
+                        variant: "default",
+                      });
+                    }
+                  }}
                 >
-                  <i className="far fa-heart"></i>
+                  <i className={`${isInWishlist(product.id) ? 'fas' : 'far'} fa-heart`}></i>
                 </button>
               </div>
             )}

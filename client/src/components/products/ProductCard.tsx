@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Product } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import { formatCurrency } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,6 +13,7 @@ type ProductCardProps = {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const { toast } = useToast();
   const [isHovering, setIsHovering] = useState(false);
   
@@ -77,21 +79,29 @@ const ProductCard = ({ product }: ProductCardProps) => {
             
             <div className={`absolute top-0 right-0 m-2 transition-opacity ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
               <button 
-                className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition mb-2 shadow-sm"
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition mb-2 shadow-sm ${isInWishlist(product.id) ? 'bg-primary text-white' : 'bg-white text-primary hover:bg-primary hover:text-white'}`}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  if (isInWishlist(product.id)) {
+                    removeFromWishlist(product.id);
+                  } else {
+                    addToWishlist(product);
+                  }
                 }}
-                aria-label="Thêm vào yêu thích"
+                aria-label={isInWishlist(product.id) ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
               >
-                <i className="fas fa-heart text-sm"></i>
+                <i className={`${isInWishlist(product.id) ? 'fas' : 'far'} fa-heart text-sm`}></i>
               </button>
-              <button 
-                className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm"
-                aria-label="Xem nhanh"
-              >
-                <i className="fas fa-eye text-sm"></i>
-              </button>
+              <Link href={`/products/${product.slug}`}>
+                <button 
+                  className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition shadow-sm"
+                  aria-label="Xem chi tiết"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <i className="fas fa-eye text-sm"></i>
+                </button>
+              </Link>
             </div>
           </div>
         </Link>

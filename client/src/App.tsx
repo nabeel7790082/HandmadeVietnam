@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ShoppingCart from "@/components/layout/ShoppingCart";
+import { Wishlist } from "@/components/layout/Wishlist";
 import Home from "@/pages/Home";
 import Products from "@/pages/Products";
 import ProductDetail from "@/pages/ProductDetail";
@@ -13,6 +14,8 @@ import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Cart from "@/pages/Cart";
 import { useState, useEffect } from "react";
+import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 
 function Router() {
   const [scrolled, setScrolled] = useState(false);
@@ -75,8 +78,13 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+      <CartProvider>
+        <WishlistProvider>
+          <Router />
+          <Wishlist />
+          <Toaster />
+        </WishlistProvider>
+      </CartProvider>
     </QueryClientProvider>
   );
 }
