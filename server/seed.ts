@@ -157,7 +157,7 @@ async function seedProducts(categoryIds: number[], artisanIds: number[]) {
       image: "https://images.unsplash.com/photo-1573883430697-4c3479aae6b9",
       images: [
         "https://images.unsplash.com/photo-1573883430697-4c3479aae6b9",
-        "https://images.unsplash.com/photo-1605015208469-d7e4522bee5d",
+        "https://tradaophuongdong.com/wp-content/uploads/2022/05/283878617_7414250081980293_9214539554017787410_n.jpg",
       ],
       categoryId: categoryIds[1],
       artisanId: artisanIds[2],
@@ -179,7 +179,7 @@ async function seedProducts(categoryIds: number[], artisanIds: number[]) {
       image: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342",
       images: [
         "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342",
-        "https://images.unsplash.com/photo-1604847078379-ea7a2e3fface",
+        "https://bizweb.dktcdn.net/100/320/888/files/vai-lua-to-tam-6.jpg?v=1677826219176",
       ],
       categoryId: categoryIds[2],
       artisanId: artisanIds[1],
@@ -201,7 +201,7 @@ async function seedProducts(categoryIds: number[], artisanIds: number[]) {
       image: "https://images.unsplash.com/photo-1603006939079-5de87a28f6d6",
       images: [
         "https://images.unsplash.com/photo-1603006939079-5de87a28f6d6",
-        "https://images.unsplash.com/photo-1533276441486-4e77d234e21f",
+        "https://gomynghe.vn/sites/default/files/styles/style_750x558/public/field/image/do-go-my-nghe-trang-tri-phong-khach.jpg?itok=s7zaAHRE",
       ],
       categoryId: categoryIds[3],
       artisanId: null,
