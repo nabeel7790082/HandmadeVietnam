@@ -85,8 +85,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   e.stopPropagation();
                   if (isInWishlist(product.id)) {
                     removeFromWishlist(product.id);
+                    toast({
+                      title: "Đã xóa khỏi danh sách yêu thích",
+                      description: `${product.name} đã được xóa khỏi danh sách yêu thích.`,
+                      variant: "default",
+                    });
                   } else {
                     addToWishlist(product);
+                    toast({
+                      title: "Đã thêm vào danh sách yêu thích",
+                      description: `${product.name} đã được thêm vào danh sách yêu thích.`,
+                      variant: "default",
+                    });
                   }
                 }}
                 aria-label={isInWishlist(product.id) ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}

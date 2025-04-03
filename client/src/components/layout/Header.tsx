@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 
 type HeaderProps = {
   isScrolled: boolean;
@@ -10,6 +11,7 @@ const Header = ({ isScrolled }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
   const { cartItems, toggleCart } = useCart();
+  const { wishlistItems, toggleWishlist } = useWishlist();
   
   const closeMenu = () => {
     setMobileMenuOpen(false);
@@ -92,13 +94,20 @@ const Header = ({ isScrolled }: HeaderProps) => {
           
           {/* Action buttons */}
           <div className="flex items-center space-x-4">
-            <a href="#" className="hover:text-primary transition relative">
+            <button 
+              onClick={toggleWishlist}
+              className="hover:text-primary transition relative"
+              aria-label="Mở danh sách yêu thích"
+            >
               <i className="fas fa-heart text-xl"></i>
-              <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
-            </a>
+              <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {wishlistItems.length}
+              </span>
+            </button>
             <button 
               onClick={toggleCart} 
               className="hover:text-primary transition relative"
+              aria-label="Mở giỏ hàng"
             >
               <i className="fas fa-shopping-cart text-xl"></i>
               <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
