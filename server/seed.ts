@@ -56,19 +56,19 @@ async function seedCategories(): Promise<number[]> {
     {
       name: "Mây tre đan",
       slug: "may-tre-dan",
-      image: "https://images.unsplash.com/photo-1605015208469-d7e4522bee5d",
+      image: "https://images.unsplash.com/photo-1573883430697-4c3479aae6b9",
       productCount: 0,
     },
     {
       name: "Lụa tơ tằm",
       slug: "lua-to-tam",
-      image: "https://images.unsplash.com/photo-1604847078379-ea7a2e3fface",
+      image: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342",
       productCount: 0,
     },
     {
       name: "Đồ gỗ mỹ nghệ",
       slug: "do-go-my-nghe",
-      image: "https://images.unsplash.com/photo-1533276441486-4e77d234e21f",
+      image: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342",
       productCount: 0,
     },
     {
