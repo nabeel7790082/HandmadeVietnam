@@ -5,11 +5,17 @@ import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+// Kiểm tra xem biến môi trường DATABASE_URL có tồn tại hay không
+const isDatabaseConfigured = !!process.env.DATABASE_URL;
+
+// Chỉ tạo pool và DB connection nếu DATABASE_URL tồn tại
+export let pool: Pool | null = null;
+export let db: any = null;
+
+if (isDatabaseConfigured) {
+  pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  db = drizzle({ client: pool, schema });
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+// Export biến để các module khác biết trạng thái kết nối
+export const hasDatabaseConnection = isDatabaseConfigured;

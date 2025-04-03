@@ -429,63 +429,83 @@ export class MemStorage implements IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  private fallbackStorage: MemStorage;
+  
+  constructor() {
+    // Tạo một instance của MemStorage để sử dụng khi db không khả dụng
+    this.fallbackStorage = new MemStorage();
+  }
+  
   // User methods
   async getUser(id: number): Promise<User | undefined> {
+    if (!db) return this.fallbackStorage.getUser(id);
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
+    if (!db) return this.fallbackStorage.getUserByUsername(username);
     const [user] = await db.select().from(users).where(eq(users.username, username));
     return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    if (!db) return this.fallbackStorage.createUser(insertUser);
     const [user] = await db.insert(users).values(insertUser).returning();
     return user;
   }
   
   // Category methods
   async getCategories(): Promise<Category[]> {
+    if (!db) return this.fallbackStorage.getCategories();
     return await db.select().from(categories);
   }
   
   async getCategoryBySlug(slug: string): Promise<Category | undefined> {
+    if (!db) return this.fallbackStorage.getCategoryBySlug(slug);
     const [category] = await db.select().from(categories).where(eq(categories.slug, slug));
     return category || undefined;
   }
   
   async createCategory(insertCategory: InsertCategory): Promise<Category> {
+    if (!db) return this.fallbackStorage.createCategory(insertCategory);
     const [category] = await db.insert(categories).values(insertCategory).returning();
     return category;
   }
   
   // Product methods
   async getProducts(): Promise<Product[]> {
+    if (!db) return this.fallbackStorage.getProducts();
     return await db.select().from(products);
   }
   
   async getProductById(id: number): Promise<Product | undefined> {
+    if (!db) return this.fallbackStorage.getProductById(id);
     const [product] = await db.select().from(products).where(eq(products.id, id));
     return product || undefined;
   }
   
   async getProductBySlug(slug: string): Promise<Product | undefined> {
+    if (!db) return this.fallbackStorage.getProductBySlug(slug);
     const [product] = await db.select().from(products).where(eq(products.slug, slug));
     return product || undefined;
   }
   
   async getProductsByCategory(categoryId: number): Promise<Product[]> {
+    if (!db) return this.fallbackStorage.getProductsByCategory(categoryId);
     return await db.select().from(products).where(eq(products.categoryId, categoryId));
   }
   
   async getFeaturedProducts(): Promise<Product[]> {
+    if (!db) return this.fallbackStorage.getFeaturedProducts();
     return await db.select().from(products).where(eq(products.isFeatured, true));
   }
   
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
+    if (!db) return this.fallbackStorage.createProduct(insertProduct);
+    
     // Start a transaction since we need to update the category's product count
-    const [product] = await db.transaction(async (tx) => {
+    const [product] = await db.transaction(async (tx: any) => {
       const [newProduct] = await tx.insert(products).values(insertProduct).returning();
       
       // Update the category's product count
@@ -502,35 +522,43 @@ export class DatabaseStorage implements IStorage {
   
   // Artisan methods
   async getArtisans(): Promise<Artisan[]> {
+    if (!db) return this.fallbackStorage.getArtisans();
     return await db.select().from(artisans);
   }
   
   async getArtisanById(id: number): Promise<Artisan | undefined> {
+    if (!db) return this.fallbackStorage.getArtisanById(id);
     const [artisan] = await db.select().from(artisans).where(eq(artisans.id, id));
     return artisan || undefined;
   }
   
   async createArtisan(insertArtisan: InsertArtisan): Promise<Artisan> {
+    if (!db) return this.fallbackStorage.createArtisan(insertArtisan);
     const [artisan] = await db.insert(artisans).values(insertArtisan).returning();
     return artisan;
   }
   
   // Testimonial methods
   async getTestimonials(): Promise<Testimonial[]> {
+    if (!db) return this.fallbackStorage.getTestimonials();
     return await db.select().from(testimonials);
   }
   
   async createTestimonial(insertTestimonial: InsertTestimonial): Promise<Testimonial> {
+    if (!db) return this.fallbackStorage.createTestimonial(insertTestimonial);
     const [testimonial] = await db.insert(testimonials).values(insertTestimonial).returning();
     return testimonial;
   }
   
   // Cart methods
   async getCartItems(sessionId: string): Promise<CartItem[]> {
+    if (!db) return this.fallbackStorage.getCartItems(sessionId);
     return await db.select().from(cartItems).where(eq(cartItems.sessionId, sessionId));
   }
   
   async getCartItemWithProduct(sessionId: string): Promise<(CartItem & { product: Product })[]> {
+    if (!db) return this.fallbackStorage.getCartItemWithProduct(sessionId);
+    
     const items = await db.select().from(cartItems).where(eq(cartItems.sessionId, sessionId));
     const result: (CartItem & { product: Product })[] = [];
     
@@ -548,6 +576,8 @@ export class DatabaseStorage implements IStorage {
   }
   
   async addToCart(insertCartItem: InsertCartItem): Promise<CartItem> {
+    if (!db) return this.fallbackStorage.addToCart(insertCartItem);
+    
     // Check if the item already exists in cart
     const [existingItem] = await db
       .select()
@@ -561,7 +591,7 @@ export class DatabaseStorage implements IStorage {
     
     if (existingItem) {
       // Update quantity of existing item
-      const newQuantity = existingItem.quantity + (insertCartItem.quantity || 1);
+      const newQuantity = (existingItem.quantity || 0) + (insertCartItem.quantity || 1);
       const [updatedItem] = await db
         .update(cartItems)
         .set({ quantity: newQuantity })
@@ -576,6 +606,8 @@ export class DatabaseStorage implements IStorage {
   }
   
   async updateCartItem(id: number, quantity: number): Promise<CartItem | undefined> {
+    if (!db) return this.fallbackStorage.updateCartItem(id, quantity);
+    
     if (quantity <= 0) {
       await db.delete(cartItems).where(eq(cartItems.id, id));
       return undefined;
@@ -590,19 +622,27 @@ export class DatabaseStorage implements IStorage {
   }
   
   async removeFromCart(id: number): Promise<void> {
+    if (!db) return this.fallbackStorage.removeFromCart(id);
     await db.delete(cartItems).where(eq(cartItems.id, id));
   }
   
   async clearCart(sessionId: string): Promise<void> {
+    if (!db) return this.fallbackStorage.clearCart(sessionId);
     await db.delete(cartItems).where(eq(cartItems.sessionId, sessionId));
   }
   
   // Subscriber methods
   async createSubscriber(insertSubscriber: InsertSubscriber): Promise<Subscriber> {
+    if (!db) return this.fallbackStorage.createSubscriber(insertSubscriber);
     const [subscriber] = await db.insert(subscribers).values(insertSubscriber).returning();
     return subscriber;
   }
 }
 
 // Sử dụng DatabaseStorage thay vì MemStorage
-export const storage = new DatabaseStorage();
+// Sử dụng MemStorage khi không có DATABASE_URL, nếu không thì sử dụng DatabaseStorage
+import { hasDatabaseConnection } from "./db";
+
+export const storage = hasDatabaseConnection 
+  ? new DatabaseStorage() 
+  : new MemStorage();

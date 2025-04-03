@@ -4,10 +4,17 @@ import {
   type InsertCategory, type InsertProduct, type InsertArtisan, type InsertTestimonial
 } from "@shared/schema";
 
-async function seed() {
+async function seed(): Promise<boolean> {
   console.log("🌱 Seeding database...");
   
   try {
+    // Kiểm tra xem đã có dữ liệu trong bảng categories chưa
+    const existingCategories = await db.select({ count: count() }).from(categories);
+    if (existingCategories[0].count > 0) {
+      console.log("⏭️ Database already has data, skipping seed");
+      return true;
+    }
+    
     // Seed categories
     const categoryIds = await seedCategories();
     
@@ -21,8 +28,10 @@ async function seed() {
     await seedTestimonials();
     
     console.log("✅ Seeding complete!");
+    return true;
   } catch (error) {
     console.error("❌ Error seeding database:", error);
+    return false;
   }
 }
 
